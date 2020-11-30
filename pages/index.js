@@ -3,43 +3,103 @@ import { useState } from 'react'
 
 import { generateQRCode } from '../utils/qrcode'
 
-export default function Home({ url: initialUrl, svg: initialSvg }) {
+const defaultColor = '#000000';
+
+export default function Home({ url: initialUrl, svg: initialSvg, color: initialColor }) {
   const [url, setUrl] = useState(initialUrl);
   const [svg, setSvg] = useState(initialSvg);
   const [encodedUrl, setEncodedUrl] = useState(initialUrl);
+  const [color, setColor] = useState(initialColor);
+
+  const buildQueryString = (url, color) => `?url=${encodeURIComponent(url)}${color !== defaultColor ? `&color=${encodeURIComponent(color)}` : ''}`
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const resp = await fetch(`/api/generate?url=${encodeURIComponent(url)}`);
+    const resp = await fetch(`/api/generate${buildQueryString(url, color)}`);
     const data = await resp.json();
     if (data.success) {
       setSvg(data.svg);
       setEncodedUrl(data.url);
 
       if (process.browser) {
-        history.pushState({ url }, '', `?url=${encodeURIComponent(url)}`);
+        history.pushState({ url }, '', buildQueryString(url, color));
       }
     }
   }
 
   return (
-    <div className="bg-lime-50 min-h-screen flex items-center justify-around">
+    <div className="bg-gradient-to-b from-gray-100 to-gray-300 min-h-screen flex items-center justify-around">
       <Head>
-        <title>QR Code SVG Generator</title>
+        <title>SVG QR Codes</title>
         <meta name="description" content="No-frills SVG QR code generator" />
       </Head>
 
       <main className="w-full h-screen sm:h-auto sm:max-w-lg p-4 sm:p-6 lg:p-8 xl:p-10 bg-white sm:rounded-xl sm:shadow-lg text-center">
         <h1 className="text-2xl sm:text-4xl text-lime-600 font-semibold tracking-tight">
-          <a href="/">QR Code SVG Generator</a>
+          <a href="/">SVG QR Codes</a>
         </h1>
 
         <form className="mt-8" onSubmit={handleSubmit}>
           <div className="my-2">
             <label htmlFor="url" className="sr-only">URL</label>
-            <input type="url" name="url" id="url" value={url} onChange={e => setUrl(e.target.value)} required id="url" className="shadow-sm focus:ring-lime-500 focus:border-lime-500 block w-full sm:text-sm lg:text-xl text-gray-700 border-gray-300 rounded-md" placeholder="https://www.yourwebsite.com/" />
+            <input
+              type="url"
+              name="url"
+              id="url"
+              value={url}
+              onFocus={e => { if (url === '') { setUrl('https://'); }}}
+              onChange={e => { setUrl(e.target.value); }}
+              required
+              id="url"
+              className="
+                shadow-sm
+                focus:ring-lime-500
+                focus:border-lime-500
+                block
+                w-full
+                sm:text-sm
+                lg:text-xl
+                text-gray-700
+                border-gray-300
+                rounded-md
+                placeholder-gray-300
+              "
+              placeholder="https://www.yourwebsite.com/"
+              tabIndex={0}
+            />
           </div>
-          <button type="submit" className="block w-full items-center px-6 py-3 border border-transparent text-base sm:text-lg font-medium rounded-md shadow text-white bg-lime-700 hover:bg-lime-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500">
+          <details className="text-left pl-1 mb-4 text-gray-500">
+            <summary className="text-xs cursor-pointer">Advanced options</summary>
+            <label className="flex space-x-2 items-center text-gray-700 mt-2">
+              <span className="">Color</span>
+              <input type="color" name="color" value={color} onChange={e => { setColor(e.target.value); }} />
+            </label>
+            </details>
+          <button
+            type="submit"
+            className="
+              block
+              w-full
+              items-center
+              px-6
+              py-3
+              border
+              border-transparent
+              text-base
+              sm:text-lg
+              font-medium
+              rounded-md
+              shadow
+              text-white
+              bg-lime-700
+              hover:bg-lime-700
+              focus:outline-none
+              focus:ring-2
+              focus:ring-offset-2
+              focus:ring-lime-500
+            "
+            tabIndex={0}
+          >
             Generate QR Code
           </button>
         </form>
@@ -50,6 +110,8 @@ export default function Home({ url: initialUrl, svg: initialSvg }) {
               <a
                 href={URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }))}
                 download={`qrcode-${url.replace(/https?\:\/\//, '').replace(/\/$/, '')}.svg`}
+                className="hover:text-gray-600 transition transform hover:scale-105"
+                title="Click to download SVG file"
               >
                 <div dangerouslySetInnerHTML={{ __html: svg }} />
               </a>
@@ -73,6 +135,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       url: context.query.url || '',
+      color: context.query.color || defaultColor,
       svg,
     },
   }
