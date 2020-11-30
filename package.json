@@ -5,12 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "postbuild": "next-on-netlify"
   },
   "dependencies": {
     "@tailwindcss/forms": "0.2.1",
     "autoprefixer": "10.0.4",
     "next": "10.0.3",
+    "next-on-netlify": "2.6.3",
     "postcss": "8.1.10",
     "qrcode-svg": "1.1.0",
     "react": "17.0.1",
