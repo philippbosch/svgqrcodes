@@ -68,10 +68,25 @@ export default function Home({ url: initialUrl, svg: initialSvg, color: initialC
               tabIndex={0}
             />
           </div>
-          <details className="text-left pl-1 mb-4 text-gray-500">
-            <summary className="text-xs cursor-pointer">Advanced options</summary>
+          <details className="
+            text-left
+            mb-4
+            text-gray-500
+          ">
+            <summary className="
+              text-xs
+              cursor-pointer
+              px-1
+              rounded-sm
+              focus:outline-none
+              focus:ring-2
+              focus:ring-lime-500
+              focus:border-lime-500
+            ">
+              Advanced options
+            </summary>
             <label className="flex space-x-2 items-center text-gray-700 mt-2">
-              <span className="">Color</span>
+              <span className="font-semibold">Color</span>
               <input type="color" name="color" value={color} onChange={e => { setColor(e.target.value); }} />
             </label>
             </details>
@@ -110,7 +125,7 @@ export default function Home({ url: initialUrl, svg: initialSvg, color: initialC
               <a
                 href={URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }))}
                 download={`qrcode-${url.replace(/https?\:\/\//, '').replace(/\/$/, '')}.svg`}
-                className="hover:text-gray-600 transition transform hover:scale-105"
+                className="transition transform hover:scale-105 focus:scale-110 focus:outline-none"
                 title="Click to download SVG file"
               >
                 <div dangerouslySetInnerHTML={{ __html: svg }} />
@@ -121,7 +136,7 @@ export default function Home({ url: initialUrl, svg: initialSvg, color: initialC
           </div>
         )}
 
-        {encodedUrl && <div className="text-gray-400 text-xs truncate">{encodedUrl}</div>}
+        {encodedUrl && <div className="text-gray-400 text-xs truncate mb-4">{encodedUrl}</div>}
       </main>
     </div>
   )
