@@ -32,6 +32,7 @@ export default function Home({ url: initialUrl, svg: initialSvg, color: initialC
       <Head>
         <title>SVG QR Codes</title>
         <meta name="description" content="No-frills SVG QR code generator" />
+        <script async defer data-domain="svgqr.codes" src="https://plausible.io/js/plausible.js"></script>
       </Head>
 
       <main className="w-full h-screen sm:h-auto sm:max-w-lg p-4 sm:p-6 lg:p-8 xl:p-10 bg-white sm:rounded-xl sm:shadow-lg text-center">
